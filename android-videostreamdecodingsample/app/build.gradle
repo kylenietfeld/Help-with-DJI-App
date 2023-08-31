@@ -1,0 +1,165 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion 30
+    buildToolsVersion '30.0.2'
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    useLibrary 'org.apache.http.legacy'
+
+
+
+    defaultConfig {
+        applicationId "com.dji.videostreamdecodingsample"
+        minSdk 26
+
+        targetSdkVersion 30
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        ndk {
+            // On x86 devices that run Android API 23 or above, if the application is targeted with API 23 or
+            // above, FFmpeg lib might lead to runtime crashes or warnings.
+            abiFilters 'armeabi-v7a', 'arm64-v8a'
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            shrinkResources true
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    sourceSets {
+        main {
+            jni.srcDirs=[]
+            jniLibs.srcDirs=['../libs']
+        }
+    }
+
+    dexOptions {
+        javaMaxHeapSize "4g"
+    }
+
+    packagingOptions {
+        doNotStrip "*/*/libdjivideo.so"
+        doNotStrip "*/*/libSDKRelativeJNI.so"
+        doNotStrip "*/*/libFlyForbid.so"
+        doNotStrip "*/*/libduml_vision_bokeh.so"
+        doNotStrip "*/*/libyuv2.so"
+        doNotStrip "*/*/libGroudStation.so"
+        doNotStrip "*/*/libFRCorkscrew.so"
+        doNotStrip "*/*/libUpgradeVerify.so"
+        doNotStrip "*/*/libFR.so"
+        doNotStrip "*/*/libDJIFlySafeCore.so"
+        doNotStrip "*/*/libdjifs_jni.so"
+        doNotStrip "*/*/libsfjni.so"
+        doNotStrip "*/*/libDJICommonJNI.so"
+        doNotStrip "*/*/libDJICSDKCommon.so"
+        doNotStrip "*/*/libDJIUpgradeCore.so"
+        doNotStrip "*/*/libDJIUpgradeJNI.so"
+        doNotStrip "*/*/libDJIWaypointV2Core.so"
+        doNotStrip "*/*/libAMapSDK_MAP_v6_9_2.so"
+        doNotStrip "*/*/libDJIMOP.so"
+        doNotStrip "*/*/libDJISDKLOGJNI.so"
+        exclude 'META-INF/rxjava.properties'
+        exclude 'assets/location_map_gps_locked.png'
+        exclude 'assets/location_map_gps_3d.png'
+
+
+        exclude 'META-INF/spring.tooling'
+        exclude 'META-INF/spring.handlers'
+        exclude 'META-INF/spring.schemas'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/INDEX.LIST'
+        exclude 'META-INF/io.netty.versions.properties'
+    }
+
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
+}
+
+
+dependencies {
+    implementation 'androidx.multidex:multidex:2.0.0'
+    implementation 'com.squareup:otto:1.3.8'
+    implementation('com.dji:dji-sdk:4.16.1', {
+        /**
+         * Uncomment the "library-anti-distortion" if your app does not need Anti Distortion for Mavic 2 Pro and Mavic 2 Zoom.
+         * Uncomment the "fly-safe-database" if you need database for release, or we will download it when DJISDKManager.getInstance().registerApp
+         * is called.
+         * Both will greatly reducing the size of the APK.
+         */
+        exclude module: 'library-anti-distortion'
+        //exclude module: 'fly-safe-database'
+    })
+    implementation project(path: ':openCV')
+    implementation project(path: ':autobahn')
+
+    compileOnly 'com.dji:dji-sdk-provided:4.16.1'
+
+    implementation 'androidx.activity:activity-ktx:1.3.0'
+
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.1.0'
+
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    //implementation 'androidx.core:core:1.3.2' autobahn
+   // implementation 'androidx.constraintlayout:constraintlayout:2.0.4' autobahn
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+    implementation 'androidx.annotation:annotation:1.2.0'
+   // implementation "androidx.core:core-ktx:1.6.0"  autobahn
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0"
+    //implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+
+    //Autobahn
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation 'androidx.core:core-ktx:1.3.1'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+
+    implementation 'com.google.android.material:material:1.3.0-alpha02'
+
+    // Add ROS 2 dependencies
+    //implementation 'org.ros2.rcljava:rcljava:0.18.0'
+    //implementation 'org.ros2.rcljava:rcljava-commons:0.18.0'
+    //implementation 'org.ros2:rcljava-interfaces:0.8.3'
+    //implementation 'org.ros2:rcljava-msg:0.8.3'
+    //implementation 'org.ros2:rcljava-node:0.8.3'
+    //implementation 'org.ros2:rosidl-generator-java:0.8.3'
+
+
+    //Socket.io
+    //implementation 'io.socket:socket.io-client:1.0.0'
+
+    //org.apache.commons.net.telnet.TelnetClient
+    //implementation group: 'commons-net', name: 'commons-net', version: '3.8.0'
+
+    //autobahnJava
+    //implementation 'io.crossbar.autobahn:autobahn-android:21.7.1'
+    //implementation 'io.crossbar.autobahn:autobahn-java:21.7.1'
+
+
+
+}
